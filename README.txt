@@ -7,7 +7,7 @@ This game was created by myself (Sam Lambrecht) as a personal project. This is a
 # Technical Aspects of DE and How to Run DE
 
 This game was coded using Python 3.8.6 (which was the most recent release when development started). In order to run the game, you must download/install Python version 3.8.6 or newer from <https://www.python.org/downloads/>. 
-To play this game, make sure that all files of the name game_xxxx.py are in the same folder. Once an adequate version of Python is installed, open game_main.py and from the top bar select Run>Run Module. This will start the game with the prompt 'What will you do?' followed by a '>' symbol, and it will wait for you to enter a command.
+To play this game, make sure that all files of the name game_xxxx.py are in the same folder. Once an adequate version of Python is installed, open IDLE (should be named IDLE (Python 3.x.x 32/64-bit). From the top bar select File>Open and open game_main.py. From game_main.py go to the top bar and select Run>Run Module. This will start the game with the prompt 'What will you do?' followed by a '>' symbol, and it will wait for you to enter a command. Alternatively, the game can be run by navigating to the folder containing the game files and double-clicking game_main.py.
 
 
 # Command How-to

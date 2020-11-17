@@ -24,15 +24,19 @@ class Player:
 
         if len(self.cmd) > 0:
             if self.cmd[0] == 'go':
-                self.move()
+                if len(self.cmd) == 2: self.move()
+                else: print("Invalid number of arguments. 'go' supports 1 argument.")
             elif self.cmd[0] == 'explore':
                 self.explore()
             elif self.cmd[0] == 'examine':
-                self.examine()
+                if len(self.cmd) == 2: self.examine()
+                else: print("Invalid number of arguments. 'examine' supports 1 argument.")
             elif self.cmd[0] == 'take':
-                self.take()
+                if len(self.cmd) == 2: self.take()
+                else: print("Invalid number of arguments. 'take' supports 1 argument.")
             elif self.cmd[0] == 'interact':
-                self.interact()
+                if len(self.cmd) == 2 or len(self.cmd) == 3: self.interact()
+                else: print("Invalid number of arguments. 'interact' supports 1 or 2 arguments.")
             elif self.cmd[0] == 'backpack':
                 self.showBackpack()
             elif self.cmd[0] == 'help':
@@ -42,7 +46,6 @@ class Player:
 
     def move(self):
         #print('move command selected')
-        
         if self.cmd[1] == 'north':
             if rm.room[self.location].north > 0:
                 if rm.room[self.location].nDoor == it.nonedoor:
@@ -113,6 +116,12 @@ the appropriate key to unlock it''')
                     self.location = rm.room[self.location].up
                     #print('Now in room',self.location)
                     print('You go into the room above')
+                elif rm.room[self.location].uDoor == it.atticdoor:
+                    if it.atticdoor.locked == True:
+                        print('The atticdoor is too high to reach.')
+                    else:
+                        self.location = rm.room[self.location].up
+                        print('You use the ladder to reach the atticdoor. You go up into the room above')
                 elif rm.room[self.location].uDoor.locked == False:
                     self.location = rm.room[self.location].up
                     #print('The door is unlocked. You go up to room',self.location)
@@ -129,6 +138,9 @@ the appropriate key to unlock it''')
                     self.location = rm.room[self.location].down
                     #print('Now in room',self.location)
                     print('You go into the room below')
+                elif rm.room[self.location].dDoor == it.atticdoor:
+                    self.location = rm.room[self.location].down
+                    print('You climb down the ladder into the room below.')
                 elif rm.room[self.location].dDoor.locked == False:
                     self.location = rm.room[self.location].down
                     #print('The door is unlocked. You go below to room',self.location)
@@ -149,6 +161,12 @@ the appropriate key to unlock it''')
         obj = self.cmd[1]
         #print('examine command selected')
         found = False
+
+        if obj == 'levermachine':
+            print(hp.leverPuzzleDesc)
+        elif obj == 'numbermachine':
+            print(hp.numberPuzzleDesc)
+            
         if len(self.backpack.contents) > 0:
             #print("checking backpack")
             try:
@@ -174,6 +192,11 @@ the appropriate key to unlock it''')
                         #print(obj,"is in current room")
                         found = True
                         print(it.items[i].desc)
+                    if it.items[i] == it.golddoor or it.items[i] == it.atticdoor or it.items[i] == it.largedoor:
+                        if self.location == it.items[i].behind:
+                            found = True
+                            print(it.items[i].desc)
+                    
         if found == False:
             print("There is no",obj,"to examine")
             
@@ -204,6 +227,7 @@ the appropriate key to unlock it''')
                             if it.items[i].name == 'trophy':
                                 self.win = True
                                 print(hp.win)
+                                f = input('\nCongrats on finishing the game! Press any key to close out of the window.')
                         else:
                             print("There is no",obj,"to pick up")
                     else:
@@ -290,7 +314,7 @@ game machines. An arcade coin or something similar would probably work. What ite
                 else:
                     print('There is no ', self.cmd[1],'to interact with')
                     
-        if len(self.cmd) == 3:
+        elif len(self.cmd) == 3:
             
 ##            try:    #still need to check if items in room or in backpack
 ##                i = it.itemNames.index(self.cmd[1])
@@ -345,7 +369,7 @@ game machines. An arcade coin or something similar would probably work. What ite
                         #print("crucible is second item")
                         it.items[j].add(it.items[i])
                 else:
-                    print('There is no interaction between the',self.cmd[1],'and the ',self.cmd[2])
+                    print('There is no interaction between the',self.cmd[1],'and the',self.cmd[2])
                 
             else:
                 print('One or both of the entered items are invalid')
@@ -377,6 +401,9 @@ game machines. An arcade coin or something similar would probably work. What ite
             if it.items[i].location == self.location:
                 #print('item is in the current room')
                 return True
+            elif it.items[i] == it.golddoor or it.items[i] == it.atticdoor or it.items[i] == it.largedoor:
+                if it.items[i].behind == self.location:
+                    return True
             else:
                 #print('the item exists, however the item is not in the current room')
                 return False

@@ -12,7 +12,7 @@ are in the room or in your backpack
 \nhelp : prints available commands at any time
 Review the README.txt file associated with the game for more in-depth help'''
 
-intro = '''Welcome to WGT (Working Game Title).
+intro = '''Welcome to Dream Escapee!
 If you have any questions about what to do or how things work, type 'help' at any time.
 You can also look through the README file associated with the game.
 Your main goal is to find the trophy room. Once inside, picking up the trophy will win the game.
@@ -44,7 +44,7 @@ To the east is a doorway to another room. There is a closed door in the ceiling 
 Objects: numbermachine, atticdoor'''
 room4Desc = '''An office room. There is a wooden desk in the center, surrounded by a chair, filing cabinets, and the like.
 To each of the north, east, south, and west there is a doorway leading to another room.
-Objects: desk, matches'''
+Objects: desk, matches, book'''
 room5Desc = '''A storage room. There are random items and piles of junk all over the place.
 To the north and to the west are doorways to other rooms.
 Objects: ladder, scrapmetal, firewood, silverkey'''
@@ -78,6 +78,8 @@ roomDesc.append(room8Desc)
 roomDesc.append(room9Desc)
 roomDesc.append(room10Desc)
 
+leverPuzzleDesc = '''levermachine: An unusual machine. Three levers stick out of the front, and a row of 5 lights runs across the top \
+There doesn't seem to be any cables running into it for power, and there doesn't seem to be any way into the machine. On the front is a small coin slot.'''
 leverPuzzleHelp = '''Enter a number from 1 to 3 to select a lever to move. Type 'leave' to step away from the machine.'''
 leverPuzzle1 = '''\nYou approach the strange lever machine. All 3 levers are in the 'up' position, and each is able to be moved into \
 the down position. There is also a series of 5 lights on the front face of the machine, all of which are off.'''
@@ -91,6 +93,8 @@ leverPuzzle5 = '''You pull the lever. The last light turns on, and the usual whi
 as a small drawer opens up, revealing a heavy steel key. You take the key and put it into your backpack.'''
 
 numberPuzzleKey = 789
+numberPuzzleDesc = '''numbermachine: A large boxy machine. There are 3 dials on the front, each able to show a number from 0 to 9. There are not any \
+other obvious features of the machine.'''
 numberPuzzleHelp = '''Enter a number from 0 to 999 into the machine. Type 'leave' to step away from the machine'''
 numberPuzzleIntro = '''You approach the number machine. There is no hole for a key, so spinning the number dials to the right sequence must do something.
 Enter help at anytime to see options.'''

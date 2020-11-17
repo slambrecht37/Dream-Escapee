@@ -80,9 +80,15 @@ class Door(Item):   #door class, (includes attic door) location is room that it 
 
     def singleInteract(self):
         if self.locked:
-            print('The',self.name,'is locked')
+            if self.name == 'atticdoor':
+                print('The atticdoor is too high to reach.')
+            else:
+                print('The',self.name,'is locked')
         else:
-            print('The',self.name, 'is unlocked')
+            if self.name == 'atticdoor':
+                print('The ladder has already been set up to reach the atticdoor')
+            else:
+                print('The',self.name, 'is unlocked')
 
     def interact(self, obj:Key):
         if self.locked:
@@ -144,7 +150,7 @@ class Furnace(Item): #for furnace, since it doesnt fit with other types but has 
                 if item.empty == False:
                     if item.contents[0].name == 'scrapmetal':
                         print("You place the filled crucible inside the furnace. The furnace seems hot enough to melt the scrapmetal")
-                        print("HINT: The next command should be 'interact crucible smeltingmold'")
+                        #print("HINT: The next command should be 'interact crucible smeltingmold'")
                         item.contents[0].used = True
                     else:
                         print("That's probably not a good idea")
@@ -171,7 +177,7 @@ class Vessel(Item):
             print('You take the crucible and pour the molten metal into the smeltingmold') #describe acquisistion of statue
             
     def emptyFunction(self):
-        print(self.name,"emptied")
+        #print(self.name,"emptied")
         if self.name == 'smeltingmold' and self.contents[0].name == 'scrapmetal' and self.contents[0].used == True:
             #print("here is statue, meine fraulein")
             print('''You open the smeltingmold and use some clamps to move the cast object into some water to cool it off. You pull the object \
@@ -193,18 +199,30 @@ items = []
 
 #Items (not any more specific)
 matchesDesc = 'matches: A book of matches'
+bookDesc = '''book: A worn book. The faded title reads, "Smelting and Casting for Dummies." You open it and read a couple pages:
+. . . . .
+Smelting boils down (pun intended) to 4 basic steps:
+Step 1: Ensure that your smelting furnace is sufficiently hot.
+Step 2: Place your crucible containing your casting metal into the furnace.
+Step 3: Pour the molten metal from the crucible into the desired mold.
+Step 4: Once the metal solidifies, extract the casted item from the mold.
+If you can remember these 4 steps, you are on your way to becoming a seasoned metalsmith. In fact, you are already better than the worker who caused the Great Slag Disaster of 1869.
+. . . . .'''
 noteDesc = 'note: A small slip of paper. It reads "Combo: 789"'
 trophyDesc = 'trophy: A golden goblet encrusted with jewels'
 
 matches = Item('matches', 4, matchesDesc, False, True)
+book = Item('book', 4, bookDesc, False, True)
 note = Item('note', 4, noteDesc, True, True)    #hidden so can't be picked up anyway because isHidden supercedes canPickUp
 trophy = Item('trophy', 10, trophyDesc, False, True)
 
 itemNames.append('matches')
+itemNames.append('book')
 itemNames.append('note')
 itemNames.append('trophy')
 
 items.append(matches)
+items.append(book)
 items.append(note)
 items.append(trophy)
 
@@ -315,7 +333,7 @@ itemNames.append('furnace')
 items.append(furnace)
 
 #Vessels
-smeltingmoldDesc = 'smeltingmold: A bulky cermic mold used for casting molten metal. It looks to be in the shape of a winged humanoid'
+smeltingmoldDesc = 'smeltingmold: A bulky ceramic mold used for casting molten metal. It looks to be in the shape of a winged humanoid'
 crucibleDesc = 'crucible: A heavy ceramic crucible'
 
 smeltingmold = Vessel('smeltingmold', 8, smeltingmoldDesc, False, False, True)
