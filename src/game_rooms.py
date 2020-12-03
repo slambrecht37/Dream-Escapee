@@ -5,7 +5,7 @@ import game_items as it
 class Room:
     def __init__(self, roomId, north, east, south, west, up = None, down = None, \
                  nDoor = None, eDoor = None, sDoor = None, wDoor = None, \
-                 uDoor = None, dDoor = None):
+                 uDoor = None, dDoor = None, items = None):
         self.roomId = roomId
         self.north = north
         self.east = east
@@ -19,20 +19,32 @@ class Room:
         self.wDoor = wDoor if wDoor is not None else it.nonedoor
         self.uDoor = uDoor if uDoor is not None else it.nonedoor
         self.dDoor = dDoor if dDoor is not None else it.nonedoor
+        self.items = items if items is not None else []
 
 room = []
 
+room1Items = [it.largedoor]
+room2Items = [it.levermachine]
+room3Items = [it.atticdoor, it.numbermachine]
+room4Items = [it.book, it.desk, it.matches]
+room5Items = [it.firewood, it.ladder, it.silverkey, it.scrapmetal]
+room6Items = [it.atticdoor, it.chest]
+room7Items = [it.pedestal]
+room8Items = [it.crucible, it.furnace, it.oldkey, it.smeltingmold]
+room9Items = [it.bronzedoor, it.golddoor, it.largedoor, it.silverdoor]
+room10Items = [it.trophy]
+
 room0 = Room(0, -1, -1, -1, -1)
-room1 = Room(1, 2, 0, 9, 0, sDoor = it.largedoor)
-room2 = Room(2, 4, 0, 1, 0)
-room3 = Room(3, 0, 4, 0, 0, up = 6, uDoor = it.atticdoor)
-room4 = Room(4, 7, 5, 2, 3)
-room5 = Room(5, 8, 0, 0, 4)
-room6 = Room(6, 0, 0, 0, 0, down = 3, dDoor = it.atticdoor)
-room7 = Room(7, 0, 8, 4, 0)
-room8 = Room(8, 0, 0, 5, 7)
-room9 = Room(9, 1, 0, 10, 0, sDoor = it.golddoor)
-room10 = Room(10, 9, 0, 0, 0)
+room1 = Room(1, 2, 0, 9, 0, sDoor = it.largedoor, items = room1Items)
+room2 = Room(2, 4, 0, 1, 0, items = room2Items)
+room3 = Room(3, 0, 4, 0, 0, up = 6, uDoor = it.atticdoor, items = room3Items)
+room4 = Room(4, 7, 5, 2, 3, items = room4Items)
+room5 = Room(5, 8, 0, 0, 4, items = room5Items)
+room6 = Room(6, 0, 0, 0, 0, down = 3, dDoor = it.atticdoor, items = room6Items)
+room7 = Room(7, 0, 8, 4, 0, items = room7Items)
+room8 = Room(8, 0, 0, 5, 7, items = room8Items)
+room9 = Room(9, 1, 0, 10, 0, sDoor = it.golddoor, items = room9Items)
+room10 = Room(10, 9, 0, 0, 0, items = room10Items)
 
 room.append(room0)
 room.append(room1)
@@ -46,5 +58,5 @@ room.append(room8)
 room.append(room9)
 room.append(room10)
 
-print("game_rooms compiles")
+#print("game_rooms compiles")
 

@@ -2,6 +2,24 @@
 
 #import game_player as pl
 
+class FurnaceStates():
+    EMPTY = 0
+    FUELED = 1
+    LIT = 2
+    LOADED = 3
+    EMPTIED = 4
+
+class CrucibleStates():
+    EMPTY = 0
+    FILLED = 1
+    INSERTED = 2
+    EMPTIED = 3
+
+class SMoldStates():
+    EMPTY = 0
+    FILLED = 1
+    EMPTIED = 2
+
 class Item:     #general item class
     def __init__(self, name, location, desc, isHidden, canPickUp):
         self.name = name
@@ -68,6 +86,40 @@ class Container(Item):      #locked boxes, chests, drawers, etc as well as unloc
             print('The',self.name,'has been accessed. You have already taken what was inside')
             return False
 
+    def interact2(self, item):
+
+        if self.alreadyOpened == False:
+            if self.locked == True:
+                if item.name == self.key.name:
+                    self.locked = False
+                    self.alreadyOpened = True
+                    
+                    if self.name == 'pedestal':
+                        print('The statue fits snugly into the pedestal. A hidden compartment in the base opens. You add the following items to your backpack: ')
+                        
+                    else:
+                        print('The key works, and the',self.name,'opens. You add the following items to your backpack: ')
+
+                    #now open
+                    for obj in self.contents:
+                        print(obj.name)
+                    return True
+                    
+                else:
+                    print('The',item.name,'doesnt seem to work with the',self.name)
+                    return False
+            else:
+                self.alreadyOpened = True
+                if self.name == 'desk': print('You try to open the desk with the',item.name,'but you find it already unlocked. You place the following items in your backpack')
+                else: print('The', self.name,'opens. You place the following items in your backpack')
+                #now open
+                for obj in self.contents:
+                    print(obj.name)
+                return True
+        else:
+            print('The', self.name,'has been accessed. You have already taken what was inside')
+            return False
+
 class Door(Item):   #door class, (includes attic door) location is room that it can be unlocked from
 
     endDoorCount = 0
@@ -78,17 +130,52 @@ class Door(Item):   #door class, (includes attic door) location is room that it 
         self.locked = locked
         self.behind = behind if behind is not None else 0
 
-    def singleInteract(self):
+    def singleInteract(self, itemlistNames = None):
+
+        backpackNames = itemlistNames if itemlistNames is not None else None
+        
         if self.locked:
             if self.name == 'atticdoor':
                 print('The atticdoor is too high to reach.')
+                inp = input('Enter the name of an item to use to reach the atticdoor: ')
             else:
                 print('The',self.name,'is locked')
+                inp = input('Enter the name of a key you possess to try to unlock it: ')
+            try:
+                i = backpackNames.index(inp)
+            except ValueError:
+                i = -1
+            if i > -1:
+                #print('chosen item in backpack')
+                if inp == self.key.name:
+                    self.locked = False
+                    if self.name == 'atticdoor':
+                        print("You stand the ladder up and it reaches the door to the attic. The ladder seems sturdy enough to climb")
+                        return True
+                    elif self.name == 'golddoor' or self.name == 'silverdoor' or self.name == 'bronzedoor':
+                        print("You insert and turn the key. Sounds of gears turning and metal scraping come from behind the door.")
+                        Door.endDoorCount += 1
+                        if Door.endDoorCount == 3:
+                            print("You hear a dull hum. Suddenly, the gold door swings open to reveal another room")
+                        return True
+                    elif self.name == 'largedoor':
+                        print("You insert and turn the key. The door slowly swings open, revealing another room")
+                        return True
+                else:
+                    if self.name == 'atticdoor':
+                        print("That's not going to help you reach the atticdoor")
+                    else:
+                        print("The",inp,"does not fit into the door's lock")
+            else:
+                print('You dont have a',inp,'to use')
         else:
             if self.name == 'atticdoor':
                 print('The ladder has already been set up to reach the atticdoor')
             else:
                 print('The',self.name, 'is unlocked')
+                
+        if Door.endDoorCount == 3:    #never reached when end doors used since the function returns, moved up there
+            print("You hear a dull hum. Suddenly, the gold door swings open to reveal another room")
 
     def interact(self, obj:Key):
         if self.locked:
@@ -127,63 +214,120 @@ class Consumable(Item):
         else:
             print(self.name,"already used")
 
-class Furnace(Item): #for furnace, since it doesnt fit with other types but has special interactions
-    def __init__(self, name, location, desc, isHidden, canPickUp, fuel, isLit = False, isFueled = False):
+class Furnace(Item): #for furnace, since it doesnt fit with other types but has special interactions 
+
+    def __init__(self, name, location, desc, isHidden, canPickUp, fuel):
         super().__init__(name, location, desc, isHidden, canPickUp)
         self.fuel = fuel
-        self.isLit = isLit
-        self.isFueled = isFueled
+        self.isLit = False
+        self.isFueled = False
+        self.isLoaded = False
+        self.state = FurnaceStates.EMPTY
 
     def interact(self, item):
-        if item == self.fuel:
-            print('The firewood was placed into the furnace')
-            item.used = True
-            self.isFueled = True
-        elif item.name == 'matches':
-            if self.isFueled == True:
+        if self.state == FurnaceStates.EMPTY:
+            if item == self.fuel:
+                print('The firewood was placed into the furnace')
+                self.state = FurnaceStates.FUELED
+            else: print('The furnace has not been fueled or lit yet. Do that before you use it')
+
+        elif self.state == FurnaceStates.FUELED:
+            if item.name == 'matches':
                 print('You strike a match and use it to light the firewood inside the furnace')
-                self.isLit = True
+                self.state = FurnaceStates.LIT
             else:
-                print('There is no fuel in the furnace to light with the matches. Add fuel and try again')
-        elif item.name == 'crucible':
-            if self.isLit == True:
-                if item.empty == False:
-                    if item.contents[0].name == 'scrapmetal':
-                        print("You place the filled crucible inside the furnace. The furnace seems hot enough to melt the scrapmetal")
-                        #print("HINT: The next command should be 'interact crucible smeltingmold'")
-                        item.contents[0].used = True
-                    else:
-                        print("That's probably not a good idea")
-                else:
-                    print("The crucible is empty. There is no point in putting in the furnace")
+                print('The fuel in the furnace has not been set alight yet. Make sure the furnace is hot before you use it for anything')
+
+        elif self.state == FurnaceStates.LIT:
+            if item.name == 'crucible':
+                if item.state == CrucibleStates.FILLED:
+                    print('You place the filled crucible into the furnace. It seems hot enough to melt the scrapmetal')
+                    self.state = FurnaceStates.LOADED
+                    item.crucibleInsertFunction()
+                else: print('The crucible is empty. There is no point in putting it in the furnace')
+            else: print('Its probably not a good idea to place that into the furnace right now')
+
+        elif self.state == FurnaceStates.LOADED:
+            if item.name == 'crucible':
+                print('The crucible was already placed in the furnace')
             else:
-                print("The furnace is not lit, so nothing will happen with the crucible")
-        else:
-            print('invalid combination of items')
+                print('You cannot place that item inside the furnace')
+
+        elif self.state == FurnaceStates.EMPTIED:
+            print('You already used the furnace')
+            
+
+    def furnaceEmptyFunction(self):
+        if self.state == FurnaceStates.LOADED:
+            print('You take the crucible out of the furnace')
+            self.state = FurnaceStates.EMPTIED
 
 class Vessel(Item):
-    def __init__(self, name, location, desc, isHidden, canPickUp,empty):
+    def __init__(self, name, location, desc, isHidden, canPickUp):
         super().__init__(name, location, desc, isHidden, canPickUp)
-        self.empty = empty
-        self.contents = []
-
-    def add(self, item):
-        self.contents.append(item)
-        self.empty = False
-        #print(item.name,"placed in",self.name)
-        if self.name == 'crucible' and item.name == 'scrapmetal' and item.used == False:
-            print('You place the bits of scrapmetal into the crucible. The amount of scrapmetal seems a perfect fit for the crucible')
-        if self.name == 'smeltingmold' and item.name == 'scrapmetal' and item.used == True:
-            print('You take the crucible and pour the molten metal into the smeltingmold') #describe acquisistion of statue
-            
-    def emptyFunction(self):
-        #print(self.name,"emptied")
-        if self.name == 'smeltingmold' and self.contents[0].name == 'scrapmetal' and self.contents[0].used == True:
-            #print("here is statue, meine fraulein")
-            print('''You open the smeltingmold and use some clamps to move the cast object into some water to cool it off. You pull the object \
-out to see it is a small metal statue of an angel. You place the statue in your backpack.''')
-        self.contents = []
         self.empty = True
+        self.contents = None
+        self.state = 0 #empty for all situations        
+
+    def interact(self, argItem = None):
+
+        item = argItem if argItem is not None else None
+        
+        if self.name == 'crucible':
+            if self.state == CrucibleStates.EMPTY:
+                if item.name == 'scrapmetal':
+                    print('You place the bits of scrapmetal into the crucible. The amount of scrapmetal seems a perfect fit for the crucible')
+                    self.state = CrucibleStates.FILLED
+                    self.contents = item
+                elif item.name == 'smeltingmold':
+                    print('The crucible is empty. There is nothing to pour into the smeltingmold')
+                else: print('Its probably not a good idea to place that in the crucible')
+                
+            elif self.state == CrucibleStates.FILLED:
+                if item.name == 'smeltingmold':
+                    print('You should probably melt the metal before pouring it into the smeltingmold')
+                else:
+                    print('That is not going to do anything with the filled crucible')
+                
+            elif self.state == CrucibleStates.INSERTED:
+                if item.name == 'smeltingmold':
+                    if item.state == SMoldStates.EMPTY:
+                        print('You pour the molten metal from the crucible into the smeltingmold. It should be cool enough to extract from the smeltingmold soon')
+                        self.state = CrucibleStates.EMPTIED
+                        item.interact(self.contents)
+                        self.contents = None
+                    else: print('The molten metal cannot be poured into the smelting mold because the smeltingmold already has something in it')
+                else: print('That object has no use with the crucible while the crucible is full of molten metal')
+
+            elif self.state == CrucibleStates.EMPTIED:
+                if item.name == 'smeltingmold':
+                    print('You already poured the molten metal from the crucible into the smeltingmold')
+                else:
+                    print('You already used the crucible. You do not need it to use it again')
+
+        elif self.name == 'smeltingmold':
+            if self.state == SMoldStates.EMPTY:
+                if not(item == None):
+                    if item.name == 'scrapmetal':
+                        self.contents = item
+                        self.state = SMoldStates.FILLED
+                    else:
+                        print('That probably shouldnt be placed into the smeltingmold')
+                else: print('The smeltingmold has no use by itself right now')
+
+            elif self.state == SMoldStates.FILLED:
+                if self.contents.name == 'scrapmetal':
+                    print('''You open the smeltingmold and use some clamps to move the cast object into some water to cool it off. You pull the object \
+out to see it is a small metal statue of an angel. You place the statue in your backpack.''')
+                self.state = SMoldStates.EMPTIED
+                self.contents = None
+
+            elif self.state == SMoldStates.EMPTIED:
+                print('You already used the smeltingmold')
+
+    def crucibleInsertFunction(self):
+        if self.name == 'crucible':
+            self.state = CrucibleStates.INSERTED
 
 class Backpack:
     def __init__(self):
@@ -215,6 +359,8 @@ matches = Item('matches', 4, matchesDesc, False, True)
 book = Item('book', 4, bookDesc, False, True)
 note = Item('note', 4, noteDesc, True, True)    #hidden so can't be picked up anyway because isHidden supercedes canPickUp
 trophy = Item('trophy', 10, trophyDesc, False, True)
+levermachine = Item('levermachine', 2, 'levermachine desc', False, False)
+numbermachine = Item('numbermachine', 3, 'numbermachine desc', False, False)
 
 itemNames.append('matches')
 itemNames.append('book')
@@ -336,8 +482,8 @@ items.append(furnace)
 smeltingmoldDesc = 'smeltingmold: A bulky ceramic mold used for casting molten metal. It looks to be in the shape of a winged humanoid'
 crucibleDesc = 'crucible: A heavy ceramic crucible'
 
-smeltingmold = Vessel('smeltingmold', 8, smeltingmoldDesc, False, False, True)
-crucible = Vessel('crucible', 8, crucibleDesc, False, False, True)
+smeltingmold = Vessel('smeltingmold', 8, smeltingmoldDesc, False, False)
+crucible = Vessel('crucible', 8, crucibleDesc, False, False)
 
 itemNames.append('smeltingmold')
 itemNames.append('crucible')
@@ -345,6 +491,6 @@ itemNames.append('crucible')
 items.append(smeltingmold)
 items.append(crucible)
         
-print("game_items compiles")
+#print("game_items compiles")
         
 

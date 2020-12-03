@@ -3,7 +3,7 @@
 playerPromptHelp = '''Your goal is to find the trophy room and pick up the trophy.
 Valid commands:
 \ngo <north, etc> or up/down (depending on location) : move around map
-\nexplore : give description of current room, including objects of interest
+\nexplore : give description of current room, including objects of interest. Use command 'explore auto' to enable automatic exploring whenever you enter a room.
 \nexamine <item> : examine an item in the room or in your backpack
 \ntake <item> : pick up an item from the room and put it in your backpack'
 \ninteract <item> <item(optional)> : interact with/use up to 2 items that
@@ -33,38 +33,28 @@ roomDesc = []
 
 room0Desc = 'filler room to fill array'
 room1Desc = '''A large empty room. There are some doors/doorways connected to it.
-To the north is a doorway to another room. To the south is a large metal door.
-Objects: largedoor'''
+To the north is a doorway to another room. To the south is a large metal door.'''
 room2Desc = '''A mostly empty room. In one corner is a large machine with 3 levers coming out of it.
-To the north there is a doorway to another room, and to the south is a doorway to another room.
-Objects: levermachine'''
+To the north there is a doorway to another room, and to the south is a doorway to another room.'''
 room3Desc = '''A small room with a door in the ceiling to the attic. On one wall is a strange machine \
 with 3 spinnable dials, each able to show digits 0-9
-To the east is a doorway to another room. There is a closed door in the ceiling that goes up to the attic.
-Objects: numbermachine, atticdoor'''
+To the east is a doorway to another room. There is a closed door in the ceiling that goes up to the attic.'''
 room4Desc = '''An office room. There is a wooden desk in the center, surrounded by a chair, filing cabinets, and the like.
-To each of the north, east, south, and west there is a doorway leading to another room.
-Objects: desk, matches, book'''
+To each of the north, east, south, and west there is a doorway leading to another room.'''
 room5Desc = '''A storage room. There are random items and piles of junk all over the place.
-To the north and to the west are doorways to other rooms.
-Objects: ladder, scrapmetal, firewood, silverkey'''
+To the north and to the west are doorways to other rooms.'''
 room6Desc = '''A cramped attic. There is a wooden chest on one side with a keyhole in the front.
-There is a door in the floor down to another room.
-Objects: chest, atticdoor'''
+There is a door in the floor down to another room.'''
 room7Desc = '''A bizarre room. The walls, floor, and ceiling are made of marble. Against one wall are three stone pedestals, \
 two of which have a small metal statue of an angel. Maybe its missing a third statue?
-There are doorways to other rooms to the south and east.
-Objects: pedestal'''
+There are doorways to other rooms to the south and east.'''
 room8Desc = '''The boiler room. There is an industrial-looking furnace on one side. A few other items are strewn around the room.
-There are doorways to other rooms to the south and west.
-Objects: furnace, oldkey, crucible, smeltingmold'''
+There are doorways to other rooms to the south and west.'''
 room9Desc = '''An empty room. There are 3 doors: a bronze one, a silver one, and a gold one. All have a slot for a key.
 To the east is a large bronze-colored door, to the west is a large silver-colored door, and to the south is a large gold-colored door. \
-To the north is a large metal door.
-Objects: bronzedoor, silverdoor, golddoor, largedoor'''
+To the north is a large metal door.'''
 room10Desc = '''Another empty room. In the center of the room is an altar of sorts, with a golden trophy sitting on top.
-To the north is a gold-colored door to another room.
-Objects: trophy'''
+To the north is a gold-colored door to another room.'''
 
 roomDesc.append(room0Desc)
 roomDesc.append(room1Desc)
@@ -102,4 +92,4 @@ numberPuzzleLose = 'Nothing happened. Must have been the wrong number.'
 numberPuzzleWin = 'After entering the number, the machine whirs. Suddenly, a small compartment opens up, holding a bronze-colored key. \
 You take the key and put it in your backpack'
 
-print('game_help compiles')
+#print('game_help compiles')

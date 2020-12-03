@@ -26,12 +26,15 @@ Example usage:
 You head north and find yourself in another room
 	
 explore:
-The 'explore' command is used to explore your current location. It will return a description of where you are, including information about objects in the room as well as which directions lead to other rooms.
+The 'explore' command is used to explore your current location. It will return a description of where you are, including information about objects in the room as well as which directions lead to other rooms. The explore command can also be used to automatically explore a room when entering it be entering 'explore auto'.
 Example usage:
 >explore
 A small room with several pieces of furniture.
 There are doorways to the south and east that lead to other rooms. There is a wooden door to the west.
 Objects: sofa, chair, table, desk, shelf, book, woodendoor
+Another example:
+>explore auto
+explore auto enabled ->When enabled, this will automatically explore a room when entering so the user doesn't have to repeatedly use explore
 	
 examine <arg>:
 The 'examine' command is used to examine a particular item in your backpack or in the current room. It will return a description of the item. Valid arguments to this function are the names of items as they appear in the world.
@@ -54,12 +57,13 @@ book
 jacket
 pencil
 smallkey
+bucket
 
 interact <arg> (<arg>):
-The 'interact' command is the most important one in the game. It is used to interact with up to 2 objects. Each object must be in the current room or in your backpack in order to interact with it. Valid arguments to this function are the names of items as they appear in the world. Keep in mind: not every item can be interacted with by itself. Many items require interaction with another item in order for something to happen.
+The 'interact' command is the most important one in the game. It is used to interact with up to 2 objects. Each object must be in the current room or in your backpack in order to interact with it. Valid arguments to this function are the names of items as they appear in the world. Keep in mind: not every item can be interacted with by itself. Most objects (doors, things with keys, etc.) only require 'interact <object>' to work, and you will be prompted for a key/item to use the object. Other objects require the command of the form 'interact <object> <object>' to do something.
 Example usage:
->interact woodendoor smallkey
-You insert the smallkey into the lock. It turns, and the door opens, revealing another room
+>interact bucket sink
+You use the sink the fill the bucket up with water
 >interact desk
 The desk is unlocked. You place the following item(s) in your bag:
 pencilcase
