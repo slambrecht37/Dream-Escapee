@@ -9,6 +9,7 @@ def leverPuzzle():
     levers = [True, True, True]
     stage = 1
     win = False
+    winFirstTime = True
     print(hp.leverPuzzle1)
     print(hp.leverPuzzle2)
     while win == False:
@@ -68,11 +69,14 @@ def leverPuzzle():
                 stage = 1
                 levers = [True, True, True]
                 lights = [ True, False, False, False, False]
+                winFirstTime = False
 
             if lights == [True, True, True, True, True] and stage == 5:
                 win = True
                 print(hp.leverPuzzle5)
-                return True
+                if winFirstTime == True:
+                    return 7
+                else: return True
 
 def numberPuzzle():
     key = hp.numberPuzzleKey
@@ -102,6 +106,68 @@ def numberPuzzle():
             else:
                 print('Invalid number entry. Enter a number from 000 to 999')
 
+class GemstonePuzzle():
+    def __init__(self):
+        self.win = False
+        self.slotsStatus = [False, False, False]
+        self.slots = [None, None, None]
+        self.slotNames = ['first', 'second', 'third']
+        self.slotTargets = ['emerald', 'sapphire', 'ruby']
+        self.slotID = 0
+        
+    def interact(self, backpackNames):
+        names = backpackNames
+        print(hp.gemstonePuzzleIntro)
 
+        while self.win == False:
+            if self.slotsStatus[self.slotID] == False:
+                print('\nSlot',self.slotID + 1,'status: Empty')
+            else: print('\nSlot',self.slotID + 1,'status:',self.slots[self.slotID])
+            
+            cmd = input('What will you try to put into the {0} hole?: '.format(self.slotNames[self.slotID]))
+            if cmd == 'next':
+                self.slotID += 1
+                if self.slotID >= 3:
+                    self.slotID -= 3
+            elif cmd == 'leave':
+                print('You decide to step away from the machine')
+                return self.slotsStatus
+            elif cmd == 'backpack':
+                for obj in names:
+                    print(obj)
+            elif cmd == 'help':
+                print(hp.gemstonePuzzleHelp)
+            else:
+                try:
+                    i = names.index(cmd)
+                except ValueError:
+                    i = -1
+
+                if i > -1:
+                    item = names[i]
+
+                    if self.slotsStatus[self.slotID] == False: #current slot is empty
+                        if item == self.slotTargets[self.slotID]:
+                            print('The',cmd,'fits into the slot')
+                            self.slots[self.slotID] = item
+                            self.slotsStatus[self.slotID] = True
+                            self.slotID += 1
+                            if self.slotID >= 3:
+                                self.slotID -= 3
+                            names.remove(item)
+                        else:
+                            print('The',cmd,'doesnt fit into that slot')
+                    else:
+                        print('The slot already has been filled')
+                else:
+                    print('There is no',cmd,'to put into the slot')
+            if self.slotsStatus == [True, True, True]:
+                self.win = True
+                print(hp.gemstonePuzzleWin)
+                return self.slotsStatus
+
+#myList = ['emerald', 'sapphire', 'ruby', 'shoe', 'rock', 'stick']
+shapemachine = GemstonePuzzle()
+#g.interact(myList)
 
         

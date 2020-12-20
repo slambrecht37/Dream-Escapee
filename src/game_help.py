@@ -53,8 +53,13 @@ There are doorways to other rooms to the south and west.'''
 room9Desc = '''An empty room. There are 3 doors: a bronze one, a silver one, and a gold one. All have a slot for a key.
 To the east is a large bronze-colored door, to the west is a large silver-colored door, and to the south is a large gold-colored door. \
 To the north is a large metal door.'''
-room10Desc = '''Another empty room. In the center of the room is an altar of sorts, with a golden trophy sitting on top.
-To the north is a gold-colored door to another room.'''
+room10Desc = '''Another empty room. In the center of the room is a small but ornate metal table. On the table rests a small cushion, upon which is a red gem.
+To the north is a gold-colored door to another room. To the south is a doorway to another room.'''
+room11Desc = '''An small room. On one side is a table with a small cushion on it. On the cushion rests a green gem.
+To the east is a silver-colored door.'''
+room12Desc = '''An small room. On one side is a table with a small cushion on it. On the cushion rests a blue gem.
+To the west is a bronze-colored door.'''
+room13Desc = '''A small, dark room. There is a strange looking box-shaped machine in one corner.'''
 
 roomDesc.append(room0Desc)
 roomDesc.append(room1Desc)
@@ -67,6 +72,9 @@ roomDesc.append(room7Desc)
 roomDesc.append(room8Desc)
 roomDesc.append(room9Desc)
 roomDesc.append(room10Desc)
+roomDesc.append(room11Desc)
+roomDesc.append(room12Desc)
+roomDesc.append(room13Desc)
 
 leverPuzzleDesc = '''levermachine: An unusual machine. Three levers stick out of the front, and a row of 5 lights runs across the top \
 There doesn't seem to be any cables running into it for power, and there doesn't seem to be any way into the machine. On the front is a small coin slot.'''
@@ -80,7 +88,8 @@ leverPuzzle3 = '''You pull the lever. Mechanical sounds come from inside of the 
 leverPuzzle4 = '''You pull the lever. Suddenly, all levers return to the 'up' state and all lights turn off. After a few seconds, \
 the first light on the machine turns back on. Looks like you have to try again'''
 leverPuzzle5 = '''You pull the lever. The last light turns on, and the usual whirring of gears is accompanied by a shrill scraping noise \
-as a small drawer opens up, revealing a heavy steel key. You take the key and put it into your backpack.'''
+as a small drawer opens up, revealing a heavy steel key. You take the key and put it into your backpack:
+heavykey'''
 
 numberPuzzleKey = 789
 numberPuzzleDesc = '''numbermachine: A large boxy machine. There are 3 dials on the front, each able to show a number from 0 to 9. There are not any \
@@ -89,7 +98,17 @@ numberPuzzleHelp = '''Enter a number from 0 to 999 into the machine. Type 'leave
 numberPuzzleIntro = '''You approach the number machine. There is no hole for a key, so spinning the number dials to the right sequence must do something.
 Enter help at anytime to see options.'''
 numberPuzzleLose = 'Nothing happened. Must have been the wrong number.'
-numberPuzzleWin = 'After entering the number, the machine whirs. Suddenly, a small compartment opens up, holding a bronze-colored key. \
-You take the key and put it in your backpack'
+numberPuzzleWin = '''After entering the number, the machine whirs. Suddenly, a small compartment opens up, holding a bronze-colored key. \
+You take the key and put it in your backpack:
+bronzekey'''
+
+gemstonePuzzleDesc = '''A large, nondescript rectangular box. On the top are 3 holes of 3 different shapes. There are not any other features of the box.'''
+gemstonePuzzleIntro = '''You approach the strange shape machine. There are 3 holes on the top face of the machine. The first hole is rectangular, \
+the second is triangular, and the third is circular. Something must go in each of these holes.
+Enter help at anytime to see available commands/options.'''
+gemstonePuzzleHelp = '''Enter the name of an object that is in your backpack to try to place it into a hole. Enter 'next' to cycle through each hole. \
+Enter 'backpack' to show the items you have in your backpack. Enter 'leave' to leave the machine.'''
+gemstonePuzzleWin = '''After you place the final gemstone into the machine, the floor starts to shake. You turn to see a small section of the floor open. \
+From the floor rises a square metal pillar, upon which sits a shiny gold trophy.'''
 
 #print('game_help compiles')

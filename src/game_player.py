@@ -4,6 +4,7 @@ import game_items as it
 import game_rooms as rm
 import game_help as hp
 import game_puzzle as pz
+import game_battle as bt
 
 class Player:
     def __init__(self):
@@ -14,6 +15,7 @@ class Player:
         self.leverMachineComplete = False
         self.cmd = ''
         self.exploreAuto = False
+        self.weapon = bt.fists
 
     def intro(self):
         print(hp.intro)
@@ -202,8 +204,13 @@ the appropriate key to unlock it''')
         elif obj == 'numbermachine':
             found = True
             print(hp.numberPuzzleDesc)
-            
-        if len(self.backpack.contents) > 0:
+        elif obj == 'shapemachine':
+            found = True
+            print(hp.gemstonePuzzleDesc)
+        elif obj == 'weapon' or obj == self.weapon.name:
+            print(self.weapon.desc)
+            found = True
+        if len(self.backpack.contents) > 0 and found == False:
             #print("checking backpack")
             try:
                 i = self.backpack.contentsNames.index(obj)
@@ -241,7 +248,7 @@ the appropriate key to unlock it''')
         obj = self.cmd[1]
         #print('take command selected')
         
-        if obj == 'numbermachine' or obj == 'levermachine':
+        if obj == 'numbermachine' or obj == 'levermachine' or obj == 'shapemachine':
             print(obj,'cannot be picked up')
 
         try:
@@ -257,14 +264,21 @@ the appropriate key to unlock it''')
                 if it.items[i].isHidden == False:
                     if it.items[i].canPickUp == True:                
                         if it.items[i].location == self.location:
-                            print(obj,"placed in backpack")
-                            self.backpack.contentsNames.append(it.items[i].name)
-                            self.backpack.contents.append(it.items[i])
-                            rm.room[self.location].items.remove(it.items[i])
-                            if it.items[i].name == 'trophy':
-                                self.win = True
-                                print(hp.win)
-                                f = input('\nCongrats on finishing the game! Press ENTER to close out of the window.')
+                            print(obj,'placed in backpack')
+                            if it.items[i].name == 'emerald' or it.items[i].name == 'sapphire' or it.items[i].name == 'ruby':
+                                if self.battleFunction(it.items[i]):
+                                    self.backpack.contentsNames.append(it.items[i].name)
+                                    self.backpack.contents.append(it.items[i])
+                                    rm.room[self.location].items.remove(it.items[i])
+                                else: self.battleRespawnFunction()
+                            else:
+                                self.backpack.contentsNames.append(it.items[i].name)
+                                self.backpack.contents.append(it.items[i])
+                                rm.room[self.location].items.remove(it.items[i])
+                                if it.items[i].name == 'trophy':
+                                    self.win = True
+                                    print(hp.win)
+                                    f = input('\nCongrats on finishing the game! Press ENTER to close out of the window.')
                         else:
                             print("There is no",obj,"to pick up")
                     else:
@@ -293,12 +307,16 @@ game machines. An arcade coin or something similar would probably work. What ite
                             i = -1
                         if i > -1:
                             if inp == 'coin':
-                                if pz.leverPuzzle() == True:
+                                result = pz.leverPuzzle()
+                                if result == True or result == 7:
                                     self.leverMachineComplete = True
                                     self.backpack.contentsNames.append(it.heavykey.name)
                                     self.backpack.contents.append(it.heavykey)
                                     self.backpack.contentsNames.remove('coin')
                                     self.backpack.contents.remove(it.coin)
+                                    if result == 7:
+                                        it.weaponcase.contentsNames.append(bt.rpg.name)
+                                        it.weaponcase.contents.append(bt.rpg)
                             else:
                                 print("The",inp,"doesn't seem to work with the machine")
                         else:
@@ -320,6 +338,12 @@ game machines. An arcade coin or something similar would probably work. What ite
                         print("You already solved this machine's puzzle")
                 else:
                     print('There is no numbermachine to interact with here')
+            elif self.cmd[1] == 'shapemachine':
+                if self.location == 13:
+                    if pz.shapemachine.win == False:
+                        self.shapemachineHandler(pz.shapemachine.interact(self.backpack.contentsNames))
+                    else:
+                        print("You already solved this machine's puzzle")
             else:
                 if self.inBackpack(self.cmd[1]) == True:
                     i = self.backpack.contentsNames.index(self.cmd[1])
@@ -351,6 +375,8 @@ game machines. An arcade coin or something similar would probably work. What ite
                             if it.items[i].name == 'atticdoor':
                                 self.backpack.contentsNames.remove('ladder')
                                 self.backpack.contents.remove(it.ladder)
+                    elif 'weaponcase' in self.cmd[1]:
+                        self.weapon = it.items[i].interact(self.weapon)
                     else:
                         print("That item doesn't seem to do anything on its own")
                 else:
@@ -380,12 +406,16 @@ game machines. An arcade coin or something similar would probably work. What ite
                                 x = -1
                             if x > -1:
                                 if it.items[x].name == 'coin':
-                                    if pz.leverPuzzle() == True:
+                                    h = pz.leverPuzzle()
+                                    if h == True or h == 7:
                                         self.leverMachineComplete = True
                                         self.backpack.contentsNames.append(it.heavykey.name)
                                         self.backpack.contents.append(it.heavykey)
                                         self.backpack.contentsNames.remove('coin')
                                         self.backpack.contents.remove(it.coin)
+                                        if h == 7:
+                                            it.weaponcase.contentsNames.append(bt.rpg.name)
+                                            it.weaponcase.contents.append(bt.rpg)
                                 else: print('The',self.cmd[2],'doesnt seem to work with the levermachine')
                             else: print("There is no",self.cmd[2],"to use")
                         else: print("You already solved this machine's puzzle")
@@ -400,12 +430,16 @@ game machines. An arcade coin or something similar would probably work. What ite
                                 x = -1
                             if x > -1:
                                 if it.items[x].name == 'coin':
-                                    if pz.leverPuzzle() == True:
+                                    h = pz.leverPuzzle()
+                                    if h == True or h == 7:
                                         self.leverMachineComplete = True
                                         self.backpack.contentsNames.append(it.heavykey.name)
                                         self.backpack.contents.append(it.heavykey)
                                         self.backpack.contentsNames.remove('coin')
                                         self.backpack.contents.remove(it.coin)
+                                        if h == 7:
+                                            it.weaponcase.contentsNames.append(bt.rpg.name)
+                                            it.weaponcase.contents.append(bt.rpg)
                                 else: print('The',self.cmd[1],'doesnt seem to work with the levermachine')
                             else: print("There is no",self.cmd[1],"to use")
                         else: print("You already solved this machine's puzzle")
@@ -511,10 +545,55 @@ game machines. An arcade coin or something similar would probably work. What ite
                 
     def showBackpack(self):
         #print('showBackpack command selected')
+        print('Equipped weapon:',self.weapon.name)
         if len(self.backpack.contents) > 0:
             for obj in self.backpack.contentsNames:
                 print(obj)
         else: print('Backpack is empty')
+
+    def battleFunction(self, item):
+        print('As you grab the',item.name, end = '')
+        print(', you hear a loud growl and turn to find yourself face to face with a',rm.room[self.location].enemy.name, end = '')
+        print('. It attacks!')
+        ply = bt.Adversary('Player', 25, self.weapon, 20)
+        bttl = bt.Battle(ply,rm.room[self.location].enemy)
+        return bttl.commence()
+
+    def battleRespawnFunction(self):
+        self.location = 9
+        print('''You suddenly open your eyes and find yourself standing next to the weaponcase in the other room. \
+Try a different weapon this time, or consider changing strategies.''')
+
+    def shapemachineHandler(self, slotsStatus):
+        try:
+            e = self.backpack.contents.index(it.emerald)
+        except ValueError:
+            e = -1
+            
+        try:
+            s = self.backpack.contents.index(it.sapphire)
+        except ValueError:
+            s = -1
+            
+        try:
+            r = self.backpack.contents.index(it.ruby)
+        except ValueError:
+            r = -1
+            
+        if slotsStatus == [True, True, True]: #machine complete, all gems used
+            #remove only from contents, as names are removed when gems used in the function
+            if e > -1: self.backpack.contents.remove(it.emerald)
+            if s > -1: self.backpack.contents.remove(it.sapphire)
+            if r > -1: self.backpack.contents.remove(it.ruby)
+            rm.room13.items.append(it.trophy)
+            it.trophy.isHidden = False
+        else:
+            if slotsStatus[0] == True: #emerald
+                if e > -1: self.backpack.contents.remove(it.emerald)
+            if slotsStatus[1] == True: #sapphire
+                if s > -1: self.backpack.contents.remove(it.sapphire)
+            if slotsStatus[2] == True: #ruby
+                if r > -1: self.backpack.contents.remove(it.ruby)
                 
     def inBackpack(self,cmdString):
         try:

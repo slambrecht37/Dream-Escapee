@@ -1,6 +1,7 @@
 #file to hold game items and classes and the actual objects themselves
 
 #import game_player as pl
+import game_battle as bt
 
 class FurnaceStates():
     EMPTY = 0
@@ -152,14 +153,16 @@ class Door(Item):   #door class, (includes attic door) location is room that it 
                     if self.name == 'atticdoor':
                         print("You stand the ladder up and it reaches the door to the attic. The ladder seems sturdy enough to climb")
                         return True
-                    elif self.name == 'golddoor' or self.name == 'silverdoor' or self.name == 'bronzedoor':
-                        print("You insert and turn the key. Sounds of gears turning and metal scraping come from behind the door.")
-                        Door.endDoorCount += 1
-                        if Door.endDoorCount == 3:
-                            print("You hear a dull hum. Suddenly, the gold door swings open to reveal another room")
-                        return True
-                    elif self.name == 'largedoor':
-                        print("You insert and turn the key. The door slowly swings open, revealing another room")
+                    
+##                    elif self.name == 'golddoor' or self.name == 'silverdoor' or self.name == 'bronzedoor':
+##                        print("You insert and turn the key. Sounds of gears turning and metal scraping come from behind the door.")
+##                        Door.endDoorCount += 1
+##                        if Door.endDoorCount == 3:
+##                            print("You hear a dull hum. Suddenly, the gold door swings open to reveal another room")
+##                        return True
+                    
+                    else:
+                        print("You insert and turn the key. The door unlocks and slowly swings open, revealing another room")
                         return True
                 else:
                     if self.name == 'atticdoor':
@@ -173,22 +176,20 @@ class Door(Item):   #door class, (includes attic door) location is room that it 
                 print('The ladder has already been set up to reach the atticdoor')
             else:
                 print('The',self.name, 'is unlocked')
-                
-        if Door.endDoorCount == 3:    #never reached when end doors used since the function returns, moved up there
-            print("You hear a dull hum. Suddenly, the gold door swings open to reveal another room")
 
     def interact(self, obj:Key):
         if self.locked:
             if obj.name == self.key.name:
                 self.locked = False
                 #print(self.name)
-                if self.name == 'golddoor' or self.name == 'silverdoor' or self.name == 'bronzedoor':
-                    print("You insert and turn the key. Sounds of gears turning and metal scraping come from behind the door.")
-                    Door.endDoorCount += 1
-                elif self.name == 'atticdoor':
+##                if self.name == 'golddoor' or self.name == 'silverdoor' or self.name == 'bronzedoor':
+##                    print("You insert and turn the key. Sounds of gears turning and metal scraping come from behind the door.")
+##                    Door.endDoorCount += 1
+                
+                if self.name == 'atticdoor':
                     print("You stand the ladder up and it reaches the door to the attic. The ladder seems sturdy enough to climb")
-                elif self.name == 'largedoor':
-                    print("You insert and turn the key. The door slowly swings open, revealing another room")
+                else:
+                    print("You insert and turn the key. The door unlocks and slowly swings open, revealing another room")
             else:
                 if self.name == atticdoor:
                     print("That's not going to help you get to the attic door")
@@ -198,10 +199,7 @@ class Door(Item):   #door class, (includes attic door) location is room that it 
             if self.name == atticdoor:
                 print("The ladder to get to the attic has already been set up")
             else:
-                print("The door is already unlocked")
-
-        if Door.endDoorCount == 3:
-            print("You hear a dull hum. Suddenly, the gold door swings open to reveal another room")        
+                print("The door is already unlocked")       
 
 class Consumable(Item):
     def __init__(self, name, location, desc, isHidden, canPickUp, used = False):
@@ -318,7 +316,8 @@ class Vessel(Item):
             elif self.state == SMoldStates.FILLED:
                 if self.contents.name == 'scrapmetal':
                     print('''You open the smeltingmold and use some clamps to move the cast object into some water to cool it off. You pull the object \
-out to see it is a small metal statue of an angel. You place the statue in your backpack.''')
+out to see it is a small metal statue of an angel. You place the statue in your backpack:
+statue''')
                 self.state = SMoldStates.EMPTIED
                 self.contents = None
 
@@ -328,6 +327,38 @@ out to see it is a small metal statue of an angel. You place the statue in your 
     def crucibleInsertFunction(self):
         if self.name == 'crucible':
             self.state = CrucibleStates.INSERTED
+
+class Case(Item):
+    def __init__(self, name, location, desc, isHidden, canPickUp, contents = None):
+        super().__init__(name, location, desc, isHidden, canPickUp)
+        self.contents = contents if contents is not None else None
+        self.contentsNames = []
+        if self.contents is not None:
+            for obj in self.contents:
+                self.contentsNames.append(obj.name)
+
+    def interact(self, currentWeapon):
+        if self.contents is not None:
+            print('You open the', self.name,'and look inside: ')
+            for obj in self.contents:
+                print(obj.desc)
+            print('Your current weapon:',currentWeapon.name)
+            inp = input("Which weapon would you like to equip?: ")
+            try:
+                i = self.contentsNames.index(inp)
+            except ValueError:
+                i = -1
+            if inp == currentWeapon.name:
+                print('You decide to keep the weapon you already have')
+                return currentWeapon
+            elif i > -1:
+                print('You chose the',self.contents[i].name)
+                newWeapon = self.contents[i]
+                self.contents[i] = currentWeapon
+                return newWeapon
+            else: print('There is no', inp, 'to take')            
+        else:
+            print('The', self.name,'is empty has nothing in it')
 
 class Backpack:
     def __init__(self):
@@ -354,23 +385,36 @@ If you can remember these 4 steps, you are on your way to becoming a seasoned me
 . . . . .'''
 noteDesc = 'note: A small slip of paper. It reads "Combo: 789"'
 trophyDesc = 'trophy: A golden goblet encrusted with jewels'
+emeraldDesc = 'emerald: A stunning green emerald with a fancy rectangular shape'
+sapphireDesc = 'sapphire: A beautiful blue sapphire cut into a pyramidal shape'
+rubyDesc = 'ruby: A vibrant red ruby in the shape of a faceted orb'
 
 matches = Item('matches', 4, matchesDesc, False, True)
 book = Item('book', 4, bookDesc, False, True)
 note = Item('note', 4, noteDesc, True, True)    #hidden so can't be picked up anyway because isHidden supercedes canPickUp
-trophy = Item('trophy', 10, trophyDesc, False, True)
+trophy = Item('trophy', 13, trophyDesc, True, True)
+emerald = Item('emerald', 11, emeraldDesc, False, True)
+sapphire = Item('sapphire', 12, sapphireDesc, False, True)
+ruby = Item('ruby', 10, rubyDesc, False, True)
 levermachine = Item('levermachine', 2, 'levermachine desc', False, False)
 numbermachine = Item('numbermachine', 3, 'numbermachine desc', False, False)
+shapemachine = Item('shapemachine',13, 'shapemachine desc', False, False)
 
 itemNames.append('matches')
 itemNames.append('book')
 itemNames.append('note')
 itemNames.append('trophy')
+itemNames.append('emerald')
+itemNames.append('sapphire')
+itemNames.append('ruby')
 
 items.append(matches)
 items.append(book)
 items.append(note)
 items.append(trophy)
+items.append(emerald)
+items.append(sapphire)
+items.append(ruby)
 
 #Keys
 nonekeyDesc = 'no key -> if you read this let me know as this shouldnt ever happen'
@@ -387,7 +431,7 @@ statueDesc = 'statue: A small metal statue of an angel'
 nonekey = Key('nonekey', 0, nonekeyDesc, True, False)
 bronzekey = Key('bronzekey', 3, bronzekeyDesc, True, True)    #found in numberpuzzle, used for bronze door
 silverkey = Key('silverkey', 5, silverkeyDesc, False, True)   #found in room 5, used for silver door
-goldkey = Key('goldkey', 7, goldkeyDesc, True, True)         #found from angel statue stuff, used for gold door
+goldkey = Key('goldkey', 7, goldkeyDesc, True, True)          #found from angel statue stuff, used for gold door
 coin = Key('coin', 6, coinDesc, True, True)                   #found in chest in attic, used for lever machine
 oldkey = Key('oldkey', 8, oldkeyDesc, False, True)            #found on floor of room 8, used for chest in attic
 ladder= Key('ladder', 5, ladderDesc, False, True)             #found onfloor of room 5, used for attic door
@@ -437,8 +481,8 @@ atticdoorDesc = 'atticdoor: A small wooden door set in the ceiling'
 largedoorDesc = 'largedoor: A large steel door with a large key hole'
 nonedoorDesc = 'no door -> if you read this let me know since this shouldnt ever happen'
 
-bronzedoor = Door('bronzedoor', 9, bronzedoorDesc, False, False, bronzekey)
-silverdoor = Door('silverdoor', 9, silverdoorDesc, False, False, silverkey)
+bronzedoor = Door('bronzedoor', 9, bronzedoorDesc, False, False, bronzekey, 12)
+silverdoor = Door('silverdoor', 9, silverdoorDesc, False, False, silverkey, 11)
 golddoor = Door('golddoor', 9, golddoorDesc, False, False, goldkey, 10)
 atticdoor = Door('atticdoor', 3, atticdoorDesc, False, False, ladder, 6)
 largedoor = Door('largedoor', 1, largedoorDesc, False, False, heavykey, 9)
@@ -457,7 +501,7 @@ items.append(atticdoor)
 items.append(largedoor)
 
 #Consumables
-scrapmetalDesc = 'scrapmetal: A pile of metal scrap. It seems lightweight, probably used for smelting'
+scrapmetalDesc = 'scrapmetal: A pile of metal scrap. It seems lightweight, probably used for small-scale smelting'
 firewoodDesc = 'firewood: Some firewood. It looks dry enough to burn'
 
 firewood = Consumable('firewood', 5, firewoodDesc, False, True)
@@ -490,7 +534,14 @@ itemNames.append('crucible')
 
 items.append(smeltingmold)
 items.append(crucible)
-        
+
+#Cases
+weaponcaseDesc = 'weaponcase: A wooden display case with a clear panel on the front. Inside there are a variety of handheld weapons'
+weaponcaseContents = [bt.sword, bt.axe, bt.hammer]
+weaponcase = Case('weaponcase', 9, weaponcaseDesc, False, False, weaponcaseContents)
+itemNames.append('weaponcase')
+items.append(weaponcase)
+
 #print("game_items compiles")
         
 
