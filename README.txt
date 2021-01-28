@@ -108,4 +108,4 @@ goldkey:
 put firewood inside furnace, then use matches to light furnace. Put the scrapmetal into the crucible then place the crucible into the furnace. Take the crucible out and pour the molten metal into the smeltingmold. Then remove the cast statue from the smelting mold. Use the statue to open the pedestal. Receive the goldkey.
 interact furnace firewood, interact furnace matches, interact crucible scrapmetal, interact crucible furnace, interact crucible smeltingmold, interact smeltingmold, interact pedestal (enter statue when prompted)
 
-Use heavykey to unlock large door. Use bronze/silver/goldkey to unlock bronze/silver/golddoor to open golddoor to trophy room. Take trophy to win.
+Use heavykey to unlock large door. Use bronze/silver/goldkey to unlock bronze/silver/golddoor. Take each gem behind each door. This will trigger a different battle each time. Win each battle to successfully place the gems in your backpack. Go south through the room with the golddoor to the room with the shapemachine. Place gems in this order: emerald, sapphire, ruby. Take trophy to win.
